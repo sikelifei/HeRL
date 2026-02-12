@@ -1,0 +1,9 @@
+# absl
+langdetect
+immutabledict
+absl-py
+nltk
+spacy
+emoji
+syllapy
+zhconv
