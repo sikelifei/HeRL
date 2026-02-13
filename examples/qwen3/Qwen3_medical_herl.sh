@@ -2,8 +2,20 @@ set -x
 
 export VLLM_ATTENTION_BACKEND=XFORMERS
 export CUDA_VISIBLE_DEVICES=0,1,2,3
-export WANDB_MODE=offline
 export CUDA_DEVICE_MAX_CONNECTIONS=1
+
+# ===== placeholders (fill these) =====
+MODEL_PATH=""
+TRAIN_FILES=""
+VAL_FILES=""
+LOCAL_DIR=""
+PROJECT_NAME=""
+EXPERIMENT_NAME=""
+
+MED_REWARD_PATH=""   #path to rarrewardpy
+
+API_BASE_URL=""
+API_KEY=""
 
 
 python3 -m verl.trainer.main_ppo \
@@ -28,14 +40,14 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.actor.policy_loss.loss_mode=mixpolicy_vanilla \
     actor_rollout_ref.actor.policy_loss.he_shaping_gamma=0.1 \
     trainer.val_before_train=False \
-    data.train_files=/workspace/verl/data/clean/train_clean.parquet \
-    data.val_files=/workspace/verl/data/clean/test_clean.parquet \
+    data.train_files="${TRAIN_FILES}" \
+    data.val_files="${VAL_FILES}" \
     data.train_batch_size=64 \
     data.max_prompt_length=4096 \
     data.max_response_length=4096 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
-    actor_rollout_ref.model.path=/workspace/model/Qwen3-4B-Instruct-2507 \
+    actor_rollout_ref.model.path="${MODEL_PATH}" \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_mini_batch_size=16 \
@@ -56,16 +68,16 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.ref.fsdp_config.param_offload=True \
     algorithm.use_kl_in_reward=False \
     trainer.critic_warmup=0 \
-    trainer.default_local_dir=your_local_path \
-    trainer.logger='["console","wandb]' \
-    trainer.project_name='your_name' \
-    trainer.experiment_name='your_name' \
-    custom_reward_function.path=/yourpath/verl/verl/utils/reward_score/rar_implicit.py \
+    trainer.default_local_dir="${LOCAL_DIR}" \
+    trainer.logger='["console","wandb"]' \
+    trainer.project_name="${PROJECT_NAME}" \
+    trainer.experiment_name="${EXPERIMENT_NAME}" \
+    custom_reward_function.path="${MED_REWARD_PATH}" \
     custom_reward_function.name=rarcompute_score \
     reward_model.reward_manager=batch \
-    +reward_model.reward_kwargs.base_url="" \
+    +reward_model.reward_kwargs.base_url="${API_BASE_URL}" \
     +reward_model.reward_kwargs.model="gpt-4o-mini" \
-    +reward_model.reward_kwargs.api_key="" \
+    +reward_model.reward_kwargs.api_key="${API_KEY}" \
     +reward_model.reward_kwargs.max_concurrency=512 \
     +reward_model.reward_kwargs.timeout_sec=60 \
     +reward_model.reward_kwargs.max_retries=2 \

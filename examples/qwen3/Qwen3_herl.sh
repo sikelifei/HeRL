@@ -1,14 +1,26 @@
 set -x
 
+# ===== placeholders (fill these) =====
+MODEL_PATH=""
+TRAIN_FILES=""
+VAL_FILES=""
+LOCAL_DIR=""
+PROJECT_NAME=""
+EXPERIMENT_NAME=""
 
+IF_REWARD_PATH=""  #path_to_ifscore.py
+
+API_BASE_URL=""
+API_KEY=""
+
+# optional: quick check (精简版，不冗杂)
+# [ -z "$MODEL_PATH" ] && echo "MODEL_PATH is empty" && exit 1
 
 export VLLM_ATTENTION_BACKEND=XFORMERS
 export CUDA_VISIBLE_DEVICES=4,5,6,7
 export CUDA_DEVICE_MAX_CONNECTIONS=1
 export NCCL_P2P_DISABLE=1
 export NCCL_NVLS_ENABLE=0
-
-
 
 python3 -m verl.trainer.main_ppo \
     algorithm.adv_estimator=grpo \
@@ -20,15 +32,14 @@ python3 -m verl.trainer.main_ppo \
     +trainer.rewrite_he.reward_shaping_alpha=0.05 \
     +trainer.rewrite_he.debug_print=False \
     +trainer.rewrite_he.prompt_mode=IF_hir \
-    +trainer.rewrite_he.log_prompt_len_metrics=false \
-    data.train_files=your_IFdata_path \
-    data.val_files=your_IFdata_path \
+    data.train_files="${TRAIN_FILES}" \
+    data.val_files="${VAL_FILES}" \
     data.train_batch_size=64 \
     data.max_prompt_length=6144 \
     data.max_response_length=2048 \
     data.filter_overlong_prompts=True \
     data.truncation='error' \
-    actor_rollout_ref.model.path=your_model_path \
+    actor_rollout_ref.model.path="${MODEL_PATH}" \
     actor_rollout_ref.actor.optim.lr=1e-6 \
     actor_rollout_ref.model.use_remove_padding=True \
     actor_rollout_ref.actor.ppo_mini_batch_size=32 \
@@ -62,11 +73,11 @@ python3 -m verl.trainer.main_ppo \
     actor_rollout_ref.actor.policy_loss.he_shaping_gamma=1 \
     trainer.critic_warmup=0 \
     trainer.val_before_train=False \
-    trainer.default_local_dir=your_local_path \
+    trainer.default_local_dir="${LOCAL_DIR}" \
     trainer.logger='["console","wandb"]' \
-    trainer.project_name='your_name' \
-    trainer.experiment_name='your_name' \
-    custom_reward_function.path=/yourpath/verl/verl/utils/reward_score/if_score/reward_compute.py \
+    trainer.project_name="${PROJECT_NAME}" \
+    trainer.experiment_name="${EXPERIMENT_NAME}" \
+    custom_reward_function.path="${IF_REWARD_PATH}" \
     custom_reward_function.name=compute_score \
     data.reward_fn_key=data_source \
     reward_model.reward_manager=naive \
