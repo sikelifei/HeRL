@@ -9,7 +9,7 @@ HeRL: A hindsight-experience-guided reinforcement learning framework that bootst
 
 
 
-![framework](.\figures\framework.png)
+![framework](figures\framework.png)
 
 # Getting Started
 
