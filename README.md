@@ -6,8 +6,7 @@ Motivating Effective Exploration in Reinforcement Learning for LLMs
 HeRL: A hindsight-experience-guided reinforcement learning framework that bootstraps effective exploration by explicitly conveying the reward-specified target behaviors to LLMs.
 </em></p>
 <hr>
-
-
+![framework](E:\cnic_work\icml26\code\HeRL\figures\framework.png)
 
 # Getting Started
 
