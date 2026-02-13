@@ -2565,13 +2565,6 @@ Return only the revised answer that satisfies the unmet constraints while preser
         if replaced == 0:
             return batch, reward_tensor, reward_extra_infos, 0, rewrite_attempted, metrics
 
-        onpolicy_compute = bool(rewrite_cfg.get("train_use_onpolicy_compute", False))
-        
-        # if rewrite_indices:
-        #     if train_use_rewrite_prompt:
-        #         # Treat rewrite samples as on-policy when training with rewrite prompts.
-        #         batch.batch.pop("he_mask", None)
-        #     else:
         he_mask = torch.zeros_like(batch.batch["response_mask"])
         he_mask[rewrite_indices] = batch.batch["response_mask"][rewrite_indices]
         batch.batch["he_mask"] = he_mask
